@@ -1,105 +1,135 @@
-# Snake Chase - Chrome Extension
+# 🐍 Snake Chase
 
-A living, realistic snake crawls across any webpage, continuously chasing a small animated rat that replaces your mouse cursor. Purely visual - the page remains fully usable.
+A realistic animated snake crawls across webpages chasing a rat that replaces your cursor.
 
-![Snake Chase](icons/icon128.png)
+Snake Chase is a lightweight, zero-dependency Chrome extension built using pure procedural canvas graphics. When activated, it seamlessly swaps your cursor for an animated rat that scurries, turns, wags its tail, and leaps to escape an undulating segmented snake pursuing it across your screen. The webpage underneath remains 100% interactive and fully functional.
 
-## What it does
+---
 
-- Hides the normal cursor while enabled and shows a cute animated **rat** at the cursor position
-- Spawns a segmented **snake** that smoothly chases the rat with natural acceleration, turning, and S-shaped undulation
-- Both creatures are procedurally drawn on a single `canvas` overlay (`pointer-events: none`, `z-index: 2147483645`)
-- Rat faces movement direction, wags tail, twitches ears, does idle bobbing and escape jumps
-- Snake features tapered body, head with eyes and flicking forked tongue, body texture, subtle shadows, and a "near catch" escape animation with cooldown
-- Runs at ~60 FPS via `requestAnimationFrame`, pauses when tab is hidden, delta-time independent
+## ✨ Features
 
-## Installation (Developer Mode)
+- **Procedural Canvas Rendering**: High-performance, delta-time compensated animation running at a smooth 60 FPS via `requestAnimationFrame`.
+- **Interactive Cursor Replacement**: The default mouse cursor is cleanly hidden while active, replaced by a responsive rat facing your direction of travel with dynamic footsteps, tail wagging, and ear twitching.
+- **Realistic Snake Mechanics**: Features a segmented multi-jointed body following the head's historical motion path with natural S-curve undulation, dynamic acceleration, and deceleration.
+- **Escape Dynamics**: Moving your mouse rapidly allows the rat to evade the snake. If the snake closes within catching distance, the rat performs an emergency jump leap and the snake triggers a brief cooldown.
+- **Completely Non-Intrusive**: The animation runs on a non-blocking `pointer-events: none` overlay. You can still click buttons, select text, scroll, type in inputs, and navigate links without interference.
+- **Instant Configuration**: Adjust snake size, crawl speed, segment count, and rat scale in real time via the extension popup.
+- **Zero Network Activity**: 100% offline, local execution. No telemetry, tracking, or external server calls.
 
-1. Open `chrome://extensions` in Chrome
-2. Enable **Developer mode** (toggle top-right)
-3. Click **Load unpacked**
-4. Select the `snake-chase` folder (this directory containing `manifest.json`)
-5. Pin the extension to your toolbar if desired
+---
 
-## How to Enable / Disable
+## 🛠️ How It Works
 
-- **Popup:** Click the extension icon → toggle **Chase ON/OFF**
-- **Keyboard shortcut:** `Alt + Shift + S` (toggle)
-  - If shortcut conflicts, change it at `chrome://extensions/shortcuts`
-- **Badge:** Green `ON` badge indicates active state
+Snake Chase operates by creating a transparent fullscreen `<canvas>` element anchored over the viewport (`z-index: 2147483645`).
+- The canvas coordinates are mapped to the viewport (`clientX`/`clientY`) and dynamically scaled to match the display's `devicePixelRatio` for razor-sharp rendering on Retina and 4K monitors.
+- When enabled, CSS hides the standard cursor (`cursor: none !important`), and the custom rat entity tracks mouse input.
+- A service worker maintains badge state and listens for global keyboard commands, while content scripts handle physics simulation and overlay rendering.
+- When switching tabs or minimizing the browser, animation loops automatically halt to conserve battery and CPU resources.
 
-## Settings (Popup)
+---
 
-- **Snake size** `0.5 – 2.0` - scales width, length, speed and catch distance
-- **Snake speed** `120 – 500` - base px/sec, auto-modulates (faster when far, slower when near)
-- **Body segments** `6 – 28` - more segments = longer, smoother snake
-- **Rat size** `0.5 – 1.8` - visual size of cursor rat
-- **Reset** - restores all defaults
+## 📦 Installation Instructions (Chrome)
 
-Settings are persisted via `chrome.storage.sync` (falls back to `local`) and applied live without reload.
+Follow these steps to install Snake Chase on Google Chrome (or Chromium-based browsers like Brave, Edge, and Opera):
 
-## Architecture
+1. **Download the latest release**:
+   - Download the latest `snake-chase-v1.0.0.zip` from the **[Releases](../../releases)** section on GitHub.
 
-```
-snake-chase/
-├── manifest.json              # MV3, permissions: storage, host_permissions http/https
-├── background/
-│   └── service-worker.js      # badge, Alt+Shift+S command, storage sync
-├── content/
-│   ├── content.js             # lifecycle, mouse/scroll/resize/visibility/SPA handling, settings sync
-│   ├── snake.js               # Snake class - historical path following, undulation, catch cooldown
-│   ├── rat.js                 # Rat class - cursor following, direction facing, foot/ear/tail animation
-│   ├── renderer.js            # Canvas overlay, DPI scaling, RAF loop, drawing (snake+rat)
-│   └── styles.css             # #snake-chase-overlay fixed overlay + cursor:none
-├── popup/
-│   ├── popup.html
-│   ├── popup.css
-│   └── popup.js               # controls, live preview, storage messaging
-└── icons/                     # 16/32/48/128 PNGs
-```
+2. **Extract the ZIP archive**:
+   - Extract `snake-chase-v1.0.0.zip` to a regular folder on your computer (e.g., in your Documents or Projects folder). Make sure the extracted folder contains `manifest.json` directly inside it.
 
-Separation:
-- **Input:** `content.js` tracks `clientX/clientY` (viewport), scroll, leave/enter, resize, fullscreen, SPA navigation
-- **Physics:** `snake.js` / `rat.js`
-- **Rendering:** `renderer.js` (single canvas)
-- **Settings/Extension:** `popup/*` + `background/service-worker.js`
+3. **Open Chrome Extensions page**:
+   - In Chrome's address bar, navigate to:
+     ```text
+     chrome://extensions
+     ```
 
-## Permissions
+4. **Enable Developer Mode**:
+   - In the top-right corner of the Extensions page, toggle the **Developer mode** switch to **ON**.
 
-- `storage` - save settings
-- `host_permissions: http://*/*, https://*/*` - inject only on regular webpages
-- No `cookies`, `history`, `webRequest`, `tabs` (only `tabs.query` for shortcut notification in background)
+5. **Load the extension**:
+   - In the top-left corner, click the **Load unpacked** button.
 
-Injection is declared for `http://*/*` and `https://*/*` only. Will not run on `chrome://`, `chrome-extension://`, Web Store (prohibited), or settings pages.
+6. **Select the folder**:
+   - Browse to and select the extracted Snake Chase folder containing `manifest.json`.
 
-## Privacy
+7. **Pin the extension (Optional)**:
+   - Click the puzzle icon (Extensions) in your Chrome toolbar and click the pin icon next to **Snake Chase** for quick access.
 
-- Everything runs locally. No backend, no auth, no analytics.
-- Mouse coordinates never leave the browser. No external API calls. No telemetry.
-- Overlay is `pointer-events: none` - does not intercept clicks, scrolling, selection, typing, or links.
+---
 
-## Known Limitations
+## 🎮 How to Enable / Disable
 
-- Web Store, `chrome://`, and `chrome-extension://` pages cannot be injected (Chrome restriction)
-- On pages with strict CSP, inline styles still work because CSS is via `content_scripts.css`; canvas not affected
-- Browser zoom and high-DPI are handled via `devicePixelRatio` canvas scaling and `clientX/clientY` viewport coords
-- `iframe` content: snake renders only in top frame, not inside cross-origin iframes (extension not injected there unless matching)
-- Fullscreen video: overlay remains fixed to viewport; may be hidden behind fullscreen element in some browsers
-- Very small viewports (<200px) work but snake may appear large; use Snake size slider
+- **Via Popup**: Click the Snake Chase extension icon in your toolbar, then toggle the **Chase** switch or click **Turn ON / Turn OFF**.
+- **Via Keyboard Shortcut**: Press `Alt + Shift + S` (macOS: `Option + Shift + S`) on any open webpage to toggle the chase immediately.
+  - You can customize this shortcut anytime at `chrome://extensions/shortcuts`.
+- **Badge Indicator**: When active, the extension icon displays a green **ON** badge.
 
-## Testing Checklist (manually verified structure)
+---
 
-- Snake follows rat, rat follows cursor, cursor hidden only when enabled
-- Clicking links / typing / selecting text / scrolling still works
-- Animation pauses when tab hidden, resumes when visible
-- Resize / scroll / SPA navigation survives
-- Mouse leaving viewport pauses chase, entering resumes
-- Settings sliders and ON/OFF and Reset and shortcut
+## ⚙️ Settings Explanation
 
-## Development
+Open the extension popup to customize the behavior in real time:
 
-No build step. Edit files and reload extension at `chrome://extensions`.
+| Setting | Range | Default | Description |
+| :--- | :---: | :---: | :--- |
+| **Snake size** | `0.5` – `2.0` | `1.0` | Scales the overall length, body thickness, head size, and strike distance of the snake. |
+| **Snake speed** | `120` – `500` | `280` | Sets base crawling speed (pixels per second). Automatically accelerates when far and slows during approach. |
+| **Body segments** | `6` – `28` | `16` | Adjusts segment count. Higher values yield a longer, more flexible snake; lower values create a shorter, agile snake. |
+| **Rat size** | `0.5` – `1.8` | `1.0` | Adjusts the visual scale of the cursor rat. |
+| **Reset** | — | — | Restores all settings and sliders to their factory default values. |
 
-## License
+Settings are automatically saved across browser sessions using `chrome.storage.sync` (with automatic fallback to `chrome.storage.local`).
 
-Original procedural graphics only, no copyrighted assets.
+---
+
+## 🌐 Supported Websites
+
+- Works on standard `http://` and `https://` websites (search engines, news, blogs, social media, shopping sites, documentation, web apps).
+- Automatically adapts to single-page application (SPA) client-side navigation (e.g., YouTube, GitHub, Twitter/X).
+- Fully supports window resizing, page scrolling, and high-DPI zoom levels.
+
+---
+
+## ⚠️ Known Limitations
+
+- **Browser-Protected Pages**: Chrome strictly prohibits extensions from executing scripts on internal browser URLs (`chrome://`, `chrome-extension://`), the Chrome Web Store, and Edge/Brave system settings pages.
+- **Cross-Origin Iframes**: The overlay renders in the main document context. Moving your mouse over cross-origin embedded `<iframe>` elements temporarily surrenders coordinate tracking until the pointer returns to the main page.
+- **Fullscreen Native Video**: In specific browser environments, hardware-accelerated fullscreen video elements (like native fullscreen video players) may layer above the canvas overlay.
+
+---
+
+## 🔒 Privacy Statement
+
+Snake Chase was built with strict privacy principles:
+- **100% Local**: All code, animations, and math execute locally inside your browser sandbox.
+- **No External Network Calls**: The extension makes zero API calls, carries no tracking pixels, and contains no analytics scripts or external libraries.
+- **No Data Collection**: Mouse positions, URLs, browsing history, and keystrokes are never logged, stored, or transmitted.
+- **Transparent Open Source**: You can inspect every line of code directly in this repository.
+
+---
+
+## 🔧 Troubleshooting
+
+- **Nothing happens when enabling on an open tab**:
+  - If a webpage was already open before you installed or reloaded the extension, reload that tab once (`F5` or `Ctrl+R`) so Chrome can initialize the environment.
+- **Shortcut does not activate**:
+  - Check `chrome://extensions/shortcuts` to ensure `Alt + Shift + S` isn't in conflict with another extension or system hotkey.
+- **Cursor disappeared after disabling**:
+  - The extension automatically restores standard cursors upon disabling. If a site's stylesheet interferes, click anywhere on the page or switch tabs to reset cursor focus.
+
+---
+
+## 🗑️ Uninstall Instructions
+
+If you wish to remove Snake Chase:
+1. Right-click the **Snake Chase** icon in your Chrome toolbar.
+2. Select **Remove from Chrome...**.
+3. Confirm by clicking **Remove**.
+   - Alternatively, navigate to `chrome://extensions`, locate **Snake Chase**, and click **Remove**.
+
+---
+
+## 📄 License
+
+MIT License. Free to use, modify, and distribute.

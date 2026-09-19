@@ -91,7 +91,6 @@ console.log("[SnakeChase] CONTENT SCRIPT LOADED", location.href);
 
   // Mouse handling - viewport coordinates
   function onMouseMove(event) {
-    console.log("[SnakeChase] MOUSE", event.clientX, event.clientY);
     mouseX = event.clientX;
     mouseY = event.clientY;
     mouseInside = true;
