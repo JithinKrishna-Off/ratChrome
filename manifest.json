@@ -1,0 +1,45 @@
+{
+  "manifest_version": 3,
+  "name": "Snake Chase",
+  "version": "1.0.0",
+  "description": "A realistic animated snake crawls across webpages chasing a rat that replaces your cursor.",
+  "permissions": ["storage", "scripting", "activeTab"],
+  "host_permissions": ["http://*/*", "https://*/*"],
+  "background": {
+    "service_worker": "background/service-worker.js"
+  },
+  "action": {
+    "default_title": "Snake Chase",
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["content/snake.js", "content/rat.js", "content/renderer.js", "content/content.js"],
+      "css": ["content/styles.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "commands": {
+    "toggle-snake": {
+      "suggested_key": {
+        "default": "Alt+Shift+S",
+        "mac": "Alt+Shift+S"
+      },
+      "description": "Toggle Snake Chase ON/OFF"
+    }
+  },
+  "web_accessible_resources": []
+}

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Snake Chase</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🐍 Snake Chase</h1>
+      <p class="subtitle">A living snake chases your cursor-rat</p>
+    </header>
+
+    <div class="toggle-row">
+      <span class="toggle-label">Chase</span>
+      <label class="switch">
+        <input type="checkbox" id="toggleEnabled">
+        <span class="slider"></span>
+      </label>
+      <span id="toggleState" class="toggle-state">OFF</span>
+    </div>
+    <div class="hint">Shortcut: <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>S</kbd></div>
+
+    <div class="settings">
+      <div class="control">
+        <div class="control-header">
+          <label for="snakeSize">Snake size</label>
+          <span class="value" id="valSnakeSize">1.0</span>
+        </div>
+        <input type="range" id="snakeSize" min="0.5" max="2.0" step="0.1">
+      </div>
+
+      <div class="control">
+        <div class="control-header">
+          <label for="snakeSpeed">Snake speed</label>
+          <span class="value" id="valSnakeSpeed">280</span>
+        </div>
+        <input type="range" id="snakeSpeed" min="120" max="500" step="10">
+      </div>
+
+      <div class="control">
+        <div class="control-header">
+          <label for="segmentCount">Body segments</label>
+          <span class="value" id="valSegmentCount">16</span>
+        </div>
+        <input type="range" id="segmentCount" min="6" max="28" step="1">
+      </div>
+
+      <div class="control">
+        <div class="control-header">
+          <label for="ratSize">Rat size</label>
+          <span class="value" id="valRatSize">1.0</span>
+        </div>
+        <input type="range" id="ratSize" min="0.5" max="1.8" step="0.1">
+      </div>
+    </div>
+
+    <div class="actions">
+      <button id="btnReset" class="btn btn-secondary">Reset</button>
+      <button id="btnToggle" class="btn btn-primary">Turn ON</button>
+    </div>
+
+    <footer>
+      <span class="privacy">🔒 100% local - no tracking, no network</span>
+      <span id="statusMsg" class="status-msg"></span>
+    </footer>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
